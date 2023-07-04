@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+  Test
+{% endblock %}
+
+{% block css %}
+{% endblock %}
+
+{% block content %}
+  <h3 class="d-inline">{{ test.lesson|default:"Random" }} </h3>|&nbsp;{{ test.test_time }}
+  <hr>
+  <form method="POST">
+    {% csrf_token %}
+  {% for quest in questions %}
+  <div class="question mb-4">
+    <p class="quest-content">
+      {{ forloop.counter }}. {{ quest.question }}
+    </p>
+    {% if quest.qtype == 1 or quest.qtype == 3 %}
+    <input type="text" name="ans[]" value="" autocomplete="off" autocorrect="off" >
+    {% else %}
+    <fieldset id="group{{ forloop.counter }}">
+      <input type="radio" id="noun{{ forloop.counter }}" class="type-radio" data-radio="radio{{ forloop.counter }}" name="ans{{ forloop.counter }}" value="1">
+      <label for="noun{{ forloop.counter }}">Noun</label><br>
+      <input type="radio" id="verb{{ forloop.counter }}" class="type-radio" data-radio="radio{{ forloop.counter }}" name="ans{{ forloop.counter }}" value="2">
+      <label for="verb{{ forloop.counter }}">Verb</label><br>
+      <input type="radio" id="adjective{{ forloop.counter }}" class="type-radio" data-radio="radio{{ forloop.counter }}" name="ans{{ forloop.counter }}" value="3">
+      <label for="adjective{{ forloop.counter }}">Adjective</label><br>
+      <input type="radio" id="adverb{{ forloop.counter }}" class="type-radio" data-radio="radio{{ forloop.counter }}" name="ans{{ forloop.counter }}" value="4">
+      <label for="adverb{{ forloop.counter }}">Adverb</label><br>
+      <input type="hidden" id="val-radio{{ forloop.counter }}" value="" name="ans[]">
+    </fieldset>
+    {% endif %}
+  </div>
+  {% endfor %}
+  <input type="submit" value="Submit" class="btn btn-primary">
+  </form> 
+{% endblock %}
+
+{% block js %}
+<script text="javascript">
+  $(".type-radio").each(function() {
+    $(this).click(function() {
+      let name = $(this).data("radio");
+      let val = $(this).val();
+      console.log(val);
+      $("#val-"+name).val(val);
+      console.log("#val-"+name);
+    })
+  });
+
+  $("form").submit(function(e) {
+    e.preventDefault();
+    let serializedData = $(this).serialize();
+    $.ajax({
+      type: "POST",
+      url: "{% url 'grading' %}",
+      data: serializedData,
+      success: function (response) {
+        var test = JSON.parse(response["test"]);
+        console.log(test);
+        var fields = test[0]["fields"];
+        var pk = test[0]["pk"];
+        alert(`Test Result: ${ fields["score"] }/${ fields["num_of_quest"] }`);
+        location.href = `/review/${pk}` ;
+      },
+      error: function (response) {
+        console.log("0");
+      }
+    });
+  });
+</script>
+{% endblock %}

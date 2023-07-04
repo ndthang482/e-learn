@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+  Review
+{% endblock %}
+
+{% block css %}
+  <style>
+    .correct-1 {
+      color: green !important;
+    }
+    .correct-0 {
+      color: red !important;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<h3 class="d-inline"> Review {{ test.lesson }} </h3>|&nbsp;{{ test.test_time }} 
+<p>Test score: {{ test.score }}/{{ test.num_of_quest }} </p>
+<br>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Question</th>
+      <th scope="col">Your answer</th>
+      <th scope="col">Correct answer</th>
+      <th scope="col">Result</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for quest in quests %}
+    <tr>
+      <th scope="row">{{ forloop.counter }}</th>
+      <td>{{ quest.question }}</td>
+      <td>{{ quest.answer }}</td>
+      <td>{{ quest.result }}</td>
+      <td  class="correct-{{ quest.correct }}">{{ quest.get_correct_display }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+
+{% block js %}
+{% endblock %}

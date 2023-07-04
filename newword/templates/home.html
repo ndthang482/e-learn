@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+  Home
+{% endblock %}
+
+{% block css %}
+{% endblock %}
+
+{% block content %}
+  <div class="test row">
+    <div class="col-md-6">
+      <h3>Random Test</h3>
+      <hr>
+      <ul>
+        <li>
+          <a href="{% url 'random_test' 20 %}">20 questions test</a>
+        </li>
+        <li>
+          <a href="{% url 'random_test' 40 %}">40 questions test</a>
+        </li>
+      </ul>
+    </div>
+    <div class="col-md-6">
+      <h3>Lesson test</h3>
+      <hr>
+      <ul>
+        {% for lesson in lessons %}
+        <li><a href="{% url 'lesson_test' lesson.number %}">Lesson {{ lesson.number }} ({{ lesson.words.all.count }} new words)</a></li>
+        {% empty %}
+        There are 0 lesson now, sorry about that!
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}
+{% endblock %}
